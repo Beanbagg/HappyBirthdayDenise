@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>Happy Birthday!</title>
+        <link rel="stylesheet" href="style.css" />
+        <style>
+            #gameModal {
+                position: fixed;
+                top: 0; left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: #000000dd;
+                display: none;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+            }
+
+            #gameModal iframe {
+                width: 90vw;
+                height: 90vh;
+                border: none;
+                border-radius: 10px;
+                box-shadow: 0 0 20px #fff;
+            }
+
+            #closeGameBtn {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                background: #fff;
+                border: none;
+                padding: 10px 15px;
+                font-size: 1em;
+                cursor: pointer;
+                border-radius: 5px;
+                z-index: 10000;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1><span id="typed-text"></span><span class="cursor">|</span></h1>
+            <button id="reveal-btn">Click for a surprise</button>
+            <div id="surprise" class="hidden">
+                <p>You're awesome!</p>
+                <img src="Happy Birthday Eating GIF by Holler Studios.gif" alt="custom birthday gif" />
+            </div>
+        </div>
+
+        <!-- Hidden Game Modal -->
+        <div id="gameModal">
+            <button id="closeGameBtn">Close Game</button>
+            <iframe id="gameFrame" src=""></iframe>
+        </div>
+
+        <script src="script.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+        <script>
+  const combo = ['d', 'e', 'n', 'i', 's', 'e'];
+  let typed = [];
+  const games = ["catch-the-cake.html", "mini-maze.html"];
+
+  document.addEventListener("keydown", (e) => {
+    typed.push(e.key.toLowerCase());
+    if (typed.length > combo.length) typed.shift();
+    if (typed.join("") === combo.join("")) {
+      launchRandomGame();
+      typed = [];
+    }
+  });
+
+  let tapCount = 0;
+  let tapTimeout;
+
+  const h1 = document.querySelector("h1");
+  h1.addEventListener("touchend", () => {
+    tapCount++;
+    if (tapTimeout) clearTimeout(tapTimeout);
+
+    tapTimeout = setTimeout(() => {
+      tapCount = 0; 
+    }, 1000);
+
+    if (tapCount === 5) {
+      launchRandomGame();
+      tapCount = 0;
+    }
+  });
+
+  function launchRandomGame() {
+    const randomGame = games[Math.floor(Math.random() * games.length)];
+    document.getElementById("gameFrame").src = randomGame;
+    document.getElementById("gameModal").style.display = "flex";
+  }
+
+  document.getElementById("closeGameBtn").addEventListener("click", () => {
+    document.getElementById("gameModal").style.display = "none";
+    document.getElementById("gameFrame").src = "";
+  });
+
+  window.addEventListener("message", (event) => {
+  if (event.data.action === "closeGame") {
+    const gameModal = document.getElementById("gameModal");
+    const gameFrame = document.getElementById("gameFrame");
+    gameModal.style.display = "none";
+    gameFrame.src = "";
+  }
+});
+</script>
+    </body>
+</html>
